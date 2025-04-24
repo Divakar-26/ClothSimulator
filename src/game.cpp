@@ -9,10 +9,11 @@ float mouseRX, mouseRY;
 float mouseRXend, mouseRYend;
 float mouseRXstart, mouseRYstart;
 bool isRightPressed;
-
-int gridX;
-int gridY;
-int gridSpacing;
+int integrationCounter = 5;
+int gridX = 18;
+int gridY = 30;
+int gridSpacing = 50;
+float gravityControl = 0.5f;
 
 int radiusOfCircle = 10;
 
@@ -36,6 +37,7 @@ bool lineIntersectsLine(float x1, float y1, float x2, float y2,
 void showLineThicknessSlider();
 void     showGridControls();
 void startSimulation();
+void ShowEngineControls();
 
 
 std::vector<Circle *> circles;
@@ -207,7 +209,7 @@ void Game::update()
     if (p)
     {
         float dt = 1.0f; // delta time
-        float gravity = 0.5f;
+        float gravity = gravityControl;
         
         for (auto &c : circles)
         {
@@ -224,7 +226,7 @@ void Game::update()
             c->y += vy + gravity;
         }
         
-        for (int i = 0; i < 5; ++i)
+        for (int i = 0; i < integrationCounter; ++i)
         {
             for (auto &conn : pinnedConnections)
             {
@@ -264,6 +266,7 @@ void Game::update()
     showLineThicknessSlider();
     showGridControls();
     startSimulation();
+    ShowEngineControls();
 }
 
 void Game::render()
@@ -484,5 +487,12 @@ void startSimulation(){
     if(ImGui::Button("StopSimulation")){
         p = false;
     }
+    ImGui::End();
+}
+
+void ShowEngineControls(){
+    ImGui::Begin("Engine Controls");
+    ImGui::SliderInt("Change Integration counter", &integrationCounter, 1, 50);
+    ImGui::SliderFloat("Change Gravity Strength", &gravityControl, 0.1f, 2.0f);
     ImGui::End();
 }
